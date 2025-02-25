@@ -1,6 +1,7 @@
-package com.example
+package com.example.ktor
 
 import io.ktor.server.application.*
+import ktor.configureDatabases
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -9,4 +10,5 @@ fun main(args: Array<String>) {
 fun Application.module() {
     configureSerialization()
     configureRouting()
+    configureDatabases()
 }
