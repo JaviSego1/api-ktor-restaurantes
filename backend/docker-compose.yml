@@ -4,12 +4,12 @@ services:
     image: mariadb:latest
 
     ports:
-      - "3305:3305"
+      - "3305:3306"
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: dbRestaurante
-      MYSQL_USER: javi
-      MYSQL_PASSWORD: javi
+      MYSQL_USER: javi2
+      MYSQL_PASSWORD: javi2
       MYSQL_ROOT_PASSWORD: javi
     volumes:
       - ./dump:/docker-entrypoint-initdb.d
