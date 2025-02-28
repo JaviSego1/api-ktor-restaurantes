@@ -27,6 +27,6 @@ INSERT INTO Restaurante (titulo, descripcion, token) VALUES
 ('Alchemist', 'Desde Copenhague, combina arte, ciencia y gastronomía en una experiencia multisensorial única.', '');
 
 INSERT INTO Usuarios (name, email, password) VALUES
-('Juan Perez', 'juan.perez@email.com', '$2a$12$VbUqzQmOmc3BfWQ1vDbWheGthEOUKW6HqO8eQudBdX7YFv8HbYg1y'), -- claveSegura123
-('Maria Gomez', 'maria.gomez@email.com', '$2a$12$LzFst3pYOqHTGH2bTfPy1eF3uQm9HZU2HLOQQxu6uFHy/.Pl8dpUe'); -- pass4567Seguro
+('Juan Perez', 'juan.perez@email.com', 'aff6f556eac8527fa590c3484315a6bf3c583c6e'), -- claveSegura123
+('Maria Gomez', 'maria.gomez@email.com', 'c6afdc559c05a1842758a6bdf1ce821b4d450ded'); -- pass4567Seguro
 
