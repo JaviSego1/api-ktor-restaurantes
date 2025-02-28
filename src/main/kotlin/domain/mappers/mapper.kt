@@ -36,6 +36,7 @@ fun UsuarioDao.toUsuario () : Usuario {
 
 fun Restaurante.toUpdateRestaurante() : UpdateRestaurante {
     return UpdateRestaurante(
+        id = id,
         titulo = titulo,
         descripcion = descripcion
     )
@@ -43,14 +44,10 @@ fun Restaurante.toUpdateRestaurante() : UpdateRestaurante {
 
 fun UpdateRestaurante.toRestaurante() : Restaurante {
     return Restaurante(
+        id = id!!,
         titulo = titulo!!,
         descripcion = descripcion!!
     )
 }
 
-fun RestauranteDao.toRestaurante() : Restaurante {
-    return Restaurante(
-        titulo = this.titulo,
-        descripcion = this.descripcion
-    )
-}
+

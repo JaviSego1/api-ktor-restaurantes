@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateRestaurante (
+    val id: Int? = null,
     var titulo: String? = null,
     var descripcion: String? = null
 )

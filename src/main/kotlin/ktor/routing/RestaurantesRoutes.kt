@@ -37,7 +37,7 @@ fun Route.restaurantesRoutes(getAllRestaurantesUseCase: GetAllRestaurantesUseCas
                 if (!request) {
                     call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
                 } else {
-                    call.respond(HttpStatusCode.NoContent)
+                    call.respond(HttpStatusCode.OK, "Restaurante editado correctamente")
                 }
             }?:run {
                 call.respond(HttpStatusCode.NoContent, "ID no encontrado")
@@ -51,7 +51,7 @@ fun Route.restaurantesRoutes(getAllRestaurantesUseCase: GetAllRestaurantesUseCas
                 if (!request) {
                     call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
                 } else {
-                    call.respond(HttpStatusCode.NoContent)
+                    call.respond(HttpStatusCode.OK, "Restaurante eliminado correctamente")
                 }
             }?:run {
                 call.respond(HttpStatusCode.NoContent, "ID no encontrado")
