@@ -1,30 +1,40 @@
 package com.example.ktor
 
-import domain.usecase.GetAllRestaurantesUseCase
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import com.example.domain.repository.RestauranteInterface
+import domain.usecase.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
-import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import ktor.routing.authRoutes
+import ktor.routing.restaurantesRoutes
 
-fun Application.configureRouting(getAllRestaurantesUseCase: GetAllRestaurantesUseCase) {
+fun Application.configureRouting(registroUseCase: RegistroUseCase, loginUseCase: LoginUseCase,
+                                 restauranteInterface: RestauranteInterface) {
+
+    val getAllRestaurantesUseCase = GetAllRestaurantesUseCase(restauranteInterface)
+    val addRestauranteUseCase = AddRestauranteUseCase(restauranteInterface)
+    val updateRestauranteUseCase = UpdateRestauranteUseCase(restauranteInterface)
+    val deleteRestauranteUseCase = DeleteRestauranteUseCase(restauranteInterface)
+
     routing {
         get("/") {
             call.respondText("Hello World!")
         }
 
-        get("/restaurantes") {
-            try {
-                val restaurantes = getAllRestaurantesUseCase() // Esto es una función suspendida
-                call.respond(restaurantes)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error obteniendo los restaurantes")
-            }
-        }
+        staticResources("/static", "static")
 
+        authRoutes(registroUseCase, loginUseCase)
 
-
+        restaurantesRoutes(
+            getAllRestaurantesUseCase,
+            addRestauranteUseCase,
+            updateRestauranteUseCase,
+            deleteRestauranteUseCase
+        )
     }
 }
+
+
+
+

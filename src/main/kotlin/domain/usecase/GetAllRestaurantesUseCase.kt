@@ -5,6 +5,8 @@ import com.example.domain.repository.RestauranteInterface
 
 class GetAllRestaurantesUseCase (val repository : RestauranteInterface) {
 
-    suspend operator fun invoke(): List<Restaurante> = repository.getAllRestaurantes()
+    suspend operator fun invoke(): List<Restaurante> {
+        return repository.getAllRestaurantes()
+    }
 
 }

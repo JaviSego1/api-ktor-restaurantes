@@ -4,9 +4,7 @@ import com.example.data.persistence.models.restaurantes.RestauranteTable.nullabl
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 object UsuarioTable: IntIdTable("Usuario") {
-    val dni = varchar("dni", 20).uniqueIndex()
     val name = varchar("name", 80)
-    val email = varchar("email", 255)
+    val email = varchar("email", 100).uniqueIndex()
     val password = varchar("password", 255)
-    val token = varchar("token", 255).nullable()
 }

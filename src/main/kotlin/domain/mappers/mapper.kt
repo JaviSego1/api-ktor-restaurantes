@@ -10,30 +10,24 @@ import com.example.domain.models.usuarios.Usuario
 fun Usuario.toUpdateUsuario() : UpdateUsuario {
     return UpdateUsuario(
         name = name,
-        dni = dni,
         email = email,
-        password = password,
-        token = token
+        password = password
     )
 }
 
 fun UpdateUsuario.toUsuario() : Usuario {
     return Usuario(
         name = name!!,
-        dni = dni!!,
         email = email!!,
-        password = password!!,
-        token = token!!
+        password = password!!
     )
 }
 
 fun UsuarioDao.toUsuario () : Usuario {
     val e = Usuario (
         this.name,
-        this.dni,
         this.email,
-        this.password,
-        this.token ?: "null"
+        this.password
     )
 
     return e

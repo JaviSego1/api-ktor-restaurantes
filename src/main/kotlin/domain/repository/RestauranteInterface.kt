@@ -6,9 +6,9 @@ import com.example.domain.models.restaurantes.UpdateRestaurante
 interface RestauranteInterface {
 
     suspend fun getAllRestaurantes(): List<Restaurante>
-    suspend fun addRestaurante(restaurante: Restaurante) : Boolean
-    suspend fun updateRestaurante(restaurante: UpdateRestaurante, nombreNuevo: String): Boolean
-    suspend fun deleteRestaurante(nombreRestaurante: String): Boolean
+    suspend fun addRestaurante(restaurante: Restaurante) : Restaurante
+    suspend fun updateRestaurante(id: Int, restaurante: Restaurante): Boolean
+    suspend fun deleteRestaurante(id: Int): Boolean
 
 
 }

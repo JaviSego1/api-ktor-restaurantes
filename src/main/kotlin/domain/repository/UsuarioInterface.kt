@@ -5,8 +5,6 @@ import com.example.domain.models.usuarios.Usuario
 
 interface UsuarioInterface {
 
-    suspend fun getAllUsuarios() : List<Usuario>
-    suspend fun getUsuarioByDni(dni: String): Usuario?
-    suspend fun login(dni: String, password: String): Boolean
-    suspend fun register(usuario: UpdateUsuario): Usuario?
+    suspend fun createUsuario(usuario: Usuario): Usuario
+    suspend fun getUsuarioByUsername(name: String): Usuario?
 }
