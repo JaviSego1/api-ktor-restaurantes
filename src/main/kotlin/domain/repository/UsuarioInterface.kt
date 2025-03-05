@@ -7,4 +7,6 @@ interface UsuarioInterface {
 
     suspend fun createUsuario(usuario: Usuario): Usuario
     suspend fun getUsuarioByUsername(name: String): Usuario?
+    suspend fun updateUserToken(userId: Int, token: String): Boolean
+    suspend fun getTokenByUsername(name: String): String?
 }

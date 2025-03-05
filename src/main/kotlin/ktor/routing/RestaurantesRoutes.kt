@@ -5,56 +5,124 @@ import domain.usecase.AddRestauranteUseCase
 import domain.usecase.DeleteRestauranteUseCase
 import domain.usecase.GetAllRestaurantesUseCase
 import domain.usecase.UpdateRestauranteUseCase
+import com.example.domain.repository.UsuarioInterface // Usamos el repositorio correcto
 import io.ktor.http.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.restaurantesRoutes(getAllRestaurantesUseCase: GetAllRestaurantesUseCase, addRestauranteUseCase: AddRestauranteUseCase,
-                             updateRestauranteUseCase: UpdateRestauranteUseCase, deleteRestauranteUseCase: DeleteRestauranteUseCase) {
+fun Route.restaurantesRoutes(
+    getAllRestaurantesUseCase: GetAllRestaurantesUseCase,
+    addRestauranteUseCase: AddRestauranteUseCase,
+    updateRestauranteUseCase: UpdateRestauranteUseCase,
+    deleteRestauranteUseCase: DeleteRestauranteUseCase,
+    usuarioInterface: UsuarioInterface // Usamos el repositorio de UsuarioInterface
+) {
 
     route("/restaurantes") {
-        get {
-            val restaurantes = getAllRestaurantesUseCase()
-            call.respond(restaurantes)
-        }
+        authenticate("jwt-auth") {
+            get {
+                val principal = call.principal<JWTPrincipal>()
+                val username = principal?.payload?.getClaim("name")?.asString()
 
-        post("/add") {
-            val request = call.receive<Restaurante>()
-            val review = addRestauranteUseCase(request.titulo, request.descripcion)
-            if (review != null) {
-                call.respond(HttpStatusCode.Created, "Restaurante creado correctamente")
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "Restaurante no creado")
-            }
-        }
+                if (username != null) {
+                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                    val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
-        patch("/edit/{id}") {
-            val id = call.parameters["id"]
-            val review = call.receive<Restaurante>()
-            id?.let {
-                val request = updateRestauranteUseCase(id.toInt(), review)
-                if (!request) {
-                    call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                    if (storedToken == providedToken) {
+                        val restaurantes = getAllRestaurantesUseCase()
+                        call.respond(restaurantes)
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized, "Invalid token")
+                    }
                 } else {
-                    call.respond(HttpStatusCode.OK, "Restaurante editado correctamente")
+                    call.respond(HttpStatusCode.Unauthorized, "Invalid token")
                 }
-            }?:run {
-                call.respond(HttpStatusCode.NoContent, "ID no encontrado")
             }
-        }
 
-        delete("/del/{id}") {
-            val id = call.parameters["id"]
-            id?.let {
-                val request = deleteRestauranteUseCase(id.toInt())
-                if (!request) {
-                    call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+            post("/add") {
+                val principal = call.principal<JWTPrincipal>()
+                val username = principal?.payload?.getClaim("name")?.asString()
+
+                if (username != null) {
+                    // Verificar que el token coincida con el almacenado en la base de datos
+                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                    val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+
+                    if (storedToken == providedToken) {
+                        val request = call.receive<Restaurante>()
+                        val review = addRestauranteUseCase(request.titulo, request.descripcion)
+                        if (review != null) {
+                            call.respond(HttpStatusCode.Created, "Restaurante creado correctamente")
+                        } else {
+                            call.respond(HttpStatusCode.BadRequest, "Restaurante no creado")
+                        }
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized, "Invalid token")
+                    }
                 } else {
-                    call.respond(HttpStatusCode.OK, "Restaurante eliminado correctamente")
+                    call.respond(HttpStatusCode.Unauthorized, "Invalid token")
                 }
-            }?:run {
-                call.respond(HttpStatusCode.NoContent, "ID no encontrado")
+            }
+
+            patch("/edit/{id}") {
+                val principal = call.principal<JWTPrincipal>()
+                val username = principal?.payload?.getClaim("name")?.asString()
+
+                if (username != null) {
+                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                    val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+
+                    if (storedToken == providedToken) {
+                        val id = call.parameters["id"]
+                        val review = call.receive<Restaurante>()
+                        id?.let {
+                            val request = updateRestauranteUseCase(id.toInt(), review)
+                            if (!request) {
+                                call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                            } else {
+                                call.respond(HttpStatusCode.OK, "Restaurante editado correctamente")
+                            }
+                        } ?: run {
+                            call.respond(HttpStatusCode.NoContent, "ID no encontrado")
+                        }
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized, "Invalid token")
+                    }
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized, "Invalid token")
+                }
+            }
+
+            delete("/del/{id}") {
+                val principal = call.principal<JWTPrincipal>()
+                val username = principal?.payload?.getClaim("name")?.asString()
+
+                if (username != null) {
+                    // Verificar que el token coincida con el almacenado en la base de datos
+                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                    val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+
+                    if (storedToken == providedToken) {
+                        val id = call.parameters["id"]
+                        id?.let {
+                            val request = deleteRestauranteUseCase(id.toInt())
+                            if (!request) {
+                                call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                            } else {
+                                call.respond(HttpStatusCode.NoContent)
+                            }
+                        } ?: run {
+                            call.respond(HttpStatusCode.BadRequest, "ID no encontrado")
+                        }
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized, "Invalid token")
+                    }
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized, "Invalid token")
+                }
             }
         }
     }

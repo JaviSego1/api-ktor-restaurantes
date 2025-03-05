@@ -1,6 +1,7 @@
 package com.example.ktor
 
 import com.example.domain.repository.RestauranteInterface
+import com.example.domain.repository.UsuarioInterface
 import domain.usecase.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -10,7 +11,8 @@ import ktor.routing.authRoutes
 import ktor.routing.restaurantesRoutes
 
 fun Application.configureRouting(registroUseCase: RegistroUseCase, loginUseCase: LoginUseCase,
-                                 restauranteInterface: RestauranteInterface) {
+                                 restauranteInterface: RestauranteInterface, usuarioInterface: UsuarioInterface
+) {
 
     val getAllRestaurantesUseCase = GetAllRestaurantesUseCase(restauranteInterface)
     val addRestauranteUseCase = AddRestauranteUseCase(restauranteInterface)
@@ -30,7 +32,8 @@ fun Application.configureRouting(registroUseCase: RegistroUseCase, loginUseCase:
             getAllRestaurantesUseCase,
             addRestauranteUseCase,
             updateRestauranteUseCase,
-            deleteRestauranteUseCase
+            deleteRestauranteUseCase,
+            usuarioInterface
         )
     }
 }

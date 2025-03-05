@@ -11,7 +11,8 @@ fun Usuario.toUpdateUsuario() : UpdateUsuario {
     return UpdateUsuario(
         name = name,
         email = email,
-        password = password
+        password = password,
+        token = token
     )
 }
 
@@ -19,19 +20,21 @@ fun UpdateUsuario.toUsuario() : Usuario {
     return Usuario(
         name = name!!,
         email = email!!,
-        password = password!!
+        password = password!!,
+        token = token!!
     )
 }
 
-fun UsuarioDao.toUsuario () : Usuario {
-    val e = Usuario (
-        this.name,
-        this.email,
-        this.password
-    )
-
-    return e
-}
+//fun UsuarioDao.toUsuario () : Usuario {
+//    val e = Usuario (
+//        this.name,
+//        this.email,
+//        this.password,
+//        this.token
+//    )
+//
+//    return e
+//}
 
 
 fun Restaurante.toUpdateRestaurante() : UpdateRestaurante {

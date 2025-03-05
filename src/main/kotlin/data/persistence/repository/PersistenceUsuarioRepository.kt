@@ -27,6 +27,24 @@ class PersistenceUsuarioRepository: UsuarioInterface {
         }
     }
 
+    override suspend fun updateUserToken(userId: Int, token: String): Boolean {
+        return suspendTransaction {
+            val user = UsuarioDao.findById(userId)
+            user?.let {
+                it.token = token
+                true
+            } ?: false
+        }
+    }
+
+    override suspend fun getTokenByUsername(name: String): String? {
+        return suspendTransaction {
+            UsuarioDao.find { UsuarioTable.name eq name }
+                .firstOrNull()
+                ?.token
+        }
+    }
+
 
 }
 

@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS Usuarios(
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
     email VARCHAR(150) UNIQUE NOT NULL,
-    password VARCHAR(255)
+    password VARCHAR(255),
+    token VARCHAR(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='tabla de usuarios';
 
 INSERT INTO Restaurante (titulo, descripcion, token) VALUES
@@ -26,7 +27,7 @@ INSERT INTO Restaurante (titulo, descripcion, token) VALUES
 ('Quintonil', 'Desde Ciudad de México, dirigido por el chef Jorge Vallejo, destaca por su reinterpretación de la cocina mexicana.', ''),
 ('Alchemist', 'Desde Copenhague, combina arte, ciencia y gastronomía en una experiencia multisensorial única.', '');
 
-INSERT INTO Usuarios (name, email, password) VALUES
-('Juan Perez', 'juan.perez@email.com', 'b460b1982188f11d175f60ed670027e1afdd16558919fe47023ecd38329e0b7f'), -- hola123
-('Maria Gomez', 'maria.gomez@email.com', '5301e4e7d2950ab5936ebdb2031b3a986c277acce0891db13642b57ba6eebf10'); -- clavesegura
+INSERT INTO Usuarios (name, email, password, token) VALUES
+('Juan Perez', 'juan.perez@email.com', 'b460b1982188f11d175f60ed670027e1afdd16558919fe47023ecd38329e0b7f', ''), -- hola123
+('Maria Gomez', 'maria.gomez@email.com', '5301e4e7d2950ab5936ebdb2031b3a986c277acce0891db13642b57ba6eebf10', ''); -- clavesegura
 

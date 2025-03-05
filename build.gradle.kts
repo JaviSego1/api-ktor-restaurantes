@@ -33,4 +33,10 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.mariadb)  // Usando la versión desde el archivo libs.versions.toml
     implementation(libs.exposedjdbc)  // Usando la versión desde el archivo libs.versions.toml
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+
+    implementation("io.ktor:ktor-server-auth-jwt:3.0.3")  // Autenticación JWT
+    implementation("io.ktor:ktor-server-auth:3.0.3")      // Módulo de autenticación
+    implementation("com.auth0:java-jwt:4.4.0")            // Librería para manejar JWT
 }

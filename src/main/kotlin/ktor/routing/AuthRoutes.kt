@@ -19,9 +19,10 @@ fun Route.authRoutes(registroUseCase: RegistroUseCase, loginUseCase: LoginUseCas
 
         post("/login") {
             val usuario = call.receive<Usuario>()
-            val loggedInUsuario = loginUseCase(usuario.name, usuario.password)
-            if (loggedInUsuario != null) {
-                call.respond(HttpStatusCode.OK, "Has iniciado sesión con éxito")
+            val token = loginUseCase(usuario.name, usuario.password)
+            if (token != null) {
+                // Aquí devolvemos el token al usuario
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Has iniciado sesión con éxito", "token" to token))
             } else {
                 call.respond(HttpStatusCode.Unauthorized, "Credenciales inválidas")
             }
