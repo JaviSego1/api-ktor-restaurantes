@@ -11,12 +11,12 @@ object JwtConfig {
     private const val realm = "ktor_realm"
     private val algorithm = Algorithm.HMAC256(secret)
 
-    fun generateToken(name: String): String {
+    fun generateToken(email: String): String {
         return JWT.create()
             .withIssuer(issuer)
             .withAudience(audience)
             .withSubject("Authentication")
-            .withClaim("name", name)
+            .withClaim("email", email)
             .withClaim("time", System.currentTimeMillis())
             .sign(algorithm)
     }
@@ -30,7 +30,7 @@ object JwtConfig {
                 .build()
         )
         config.validate { credential ->
-            if (credential.payload.getClaim("name").asString() != null) {
+            if (credential.payload.getClaim("email").asString() != null) {
                 JWTPrincipal(credential.payload)
             } else null
         }

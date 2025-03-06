@@ -25,10 +25,10 @@ fun Route.restaurantesRoutes(
         authenticate("jwt-auth") {
             get {
                 val principal = call.principal<JWTPrincipal>()
-                val username = principal?.payload?.getClaim("name")?.asString()
+                val email = principal?.payload?.getClaim("email")?.asString()
 
-                if (username != null) {
-                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                if (email != null) {
+                    val storedToken = usuarioInterface.getTokenByUsername(email)
                     val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
                     if (storedToken == providedToken) {
@@ -44,11 +44,11 @@ fun Route.restaurantesRoutes(
 
             post("/add") {
                 val principal = call.principal<JWTPrincipal>()
-                val username = principal?.payload?.getClaim("name")?.asString()
+                val email = principal?.payload?.getClaim("email")?.asString()
 
-                if (username != null) {
+                if (email != null) {
                     // Verificar que el token coincida con el almacenado en la base de datos
-                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                    val storedToken = usuarioInterface.getTokenByUsername(email)
                     val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
                     if (storedToken == providedToken) {
@@ -69,10 +69,10 @@ fun Route.restaurantesRoutes(
 
             patch("/edit/{id}") {
                 val principal = call.principal<JWTPrincipal>()
-                val username = principal?.payload?.getClaim("name")?.asString()
+                val email = principal?.payload?.getClaim("email")?.asString()
 
-                if (username != null) {
-                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                if (email != null) {
+                    val storedToken = usuarioInterface.getTokenByUsername(email)
                     val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
                     if (storedToken == providedToken) {
@@ -98,11 +98,11 @@ fun Route.restaurantesRoutes(
 
             delete("/del/{id}") {
                 val principal = call.principal<JWTPrincipal>()
-                val username = principal?.payload?.getClaim("name")?.asString()
+                val email = principal?.payload?.getClaim("email")?.asString()
 
-                if (username != null) {
+                if (email != null) {
                     // Verificar que el token coincida con el almacenado en la base de datos
-                    val storedToken = usuarioInterface.getTokenByUsername(username)
+                    val storedToken = usuarioInterface.getTokenByUsername(email)
                     val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
                     if (storedToken == providedToken) {

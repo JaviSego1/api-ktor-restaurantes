@@ -11,7 +11,7 @@ class LoginUseCase (private val repository: UsuarioInterface) {
         val usuario = repository.getUsuarioByUsername(username)
         return if (usuario != null && PasswordHash.verify(password, usuario.password)) {
             // Generar el token JWT
-            val token = JwtConfig.generateToken(usuario.name)
+            val token = JwtConfig.generateToken(usuario.email)
 
             // Actualizar el token en la base de datos
             repository.updateUserToken(usuario.id, token)

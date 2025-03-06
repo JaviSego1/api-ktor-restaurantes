@@ -37,9 +37,9 @@ class PersistenceUsuarioRepository: UsuarioInterface {
         }
     }
 
-    override suspend fun getTokenByUsername(name: String): String? {
+    override suspend fun getTokenByUsername(email: String): String? {
         return suspendTransaction {
-            UsuarioDao.find { UsuarioTable.name eq name }
+            UsuarioDao.find { UsuarioTable.email eq email }
                 .firstOrNull()
                 ?.token
         }
