@@ -53,7 +53,7 @@ fun Route.restaurantesRoutes(
 
                     if (storedToken == providedToken) {
                         val request = call.receive<Restaurante>()
-                        val review = addRestauranteUseCase(request.titulo, request.descripcion)
+                        val review = addRestauranteUseCase(request.titulo, request.descripcion, request.imagen)
                         if (review != null) {
                             call.respond(HttpStatusCode.Created, "Restaurante creado correctamente")
                         } else {

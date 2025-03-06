@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Restaurante(
     val id: Int = 0,
     val titulo: String,
-    val descripcion: String
+    val descripcion: String,
+    val imagen: String
 )

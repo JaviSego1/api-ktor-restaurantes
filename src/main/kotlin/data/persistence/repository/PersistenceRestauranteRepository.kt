@@ -26,6 +26,7 @@ class PersistenceRestauranteRepository: RestauranteInterface{
             RestauranteDao.new {
                 titulo = restaurante.titulo
                 descripcion = restaurante.descripcion
+                imagen = restaurante.imagen
             }.toRestaurante()
         }
     }
@@ -35,6 +36,7 @@ class PersistenceRestauranteRepository: RestauranteInterface{
             val res = RestauranteTable.update({RestauranteTable.id eq id}) {
                 it[titulo]= restaurante.titulo
                 it[descripcion] = restaurante.descripcion
+                it[imagen] = restaurante.imagen
             }
             res > 0
         }

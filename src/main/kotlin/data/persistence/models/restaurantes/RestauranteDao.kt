@@ -12,12 +12,14 @@ class RestauranteDao(id: EntityID<Int>) : IntEntity(id) {
 
     var titulo by RestauranteTable.titulo
     var descripcion by RestauranteTable.descripcion
+    var imagen by RestauranteTable.imagen
 
     fun toRestaurante(): Restaurante {
         return Restaurante(
             id = id.value,
             titulo = titulo,
-            descripcion = descripcion
+            descripcion = descripcion,
+            imagen = imagen
         )
     }
 }

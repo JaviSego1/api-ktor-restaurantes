@@ -41,7 +41,8 @@ fun Restaurante.toUpdateRestaurante() : UpdateRestaurante {
     return UpdateRestaurante(
         id = id,
         titulo = titulo,
-        descripcion = descripcion
+        descripcion = descripcion,
+        imagen = imagen
     )
 }
 
@@ -49,7 +50,8 @@ fun UpdateRestaurante.toRestaurante() : Restaurante {
     return Restaurante(
         id = id!!,
         titulo = titulo!!,
-        descripcion = descripcion!!
+        descripcion = descripcion!!,
+        imagen = imagen!!
     )
 }
 
