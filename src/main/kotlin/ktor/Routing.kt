@@ -35,6 +35,7 @@ fun Application.configureRouting(registroUseCase: RegistroUseCase, loginUseCase:
             deleteRestauranteUseCase,
             usuarioInterface
         )
+
     }
 }
 

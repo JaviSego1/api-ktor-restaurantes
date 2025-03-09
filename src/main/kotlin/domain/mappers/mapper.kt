@@ -46,13 +46,14 @@ fun Restaurante.toUpdateRestaurante() : UpdateRestaurante {
     )
 }
 
-fun UpdateRestaurante.toRestaurante() : Restaurante {
+fun UpdateRestaurante.toRestaurante(): Restaurante {
     return Restaurante(
-        id = id!!,
-        titulo = titulo!!,
-        descripcion = descripcion!!,
-        imagen = imagen!!
+        id = id ?: 0, // Si id es nulo, se asigna 0
+        titulo = titulo ?: "", // Si titulo es nulo, se asigna una cadena vacía
+        descripcion = descripcion ?: "", // Si descripcion es nulo, se asigna una cadena vacía
+        imagen = imagen ?: "" // Si imagen es nulo, se asigna una cadena vacía
     )
+
 }
 
 

@@ -5,22 +5,23 @@ import domain.usecase.AddRestauranteUseCase
 import domain.usecase.DeleteRestauranteUseCase
 import domain.usecase.GetAllRestaurantesUseCase
 import domain.usecase.UpdateRestauranteUseCase
-import com.example.domain.repository.UsuarioInterface // Usamos el repositorio correcto
+import com.example.domain.repository.UsuarioInterface
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.io.File
+import java.util.*
 
 fun Route.restaurantesRoutes(
     getAllRestaurantesUseCase: GetAllRestaurantesUseCase,
     addRestauranteUseCase: AddRestauranteUseCase,
     updateRestauranteUseCase: UpdateRestauranteUseCase,
     deleteRestauranteUseCase: DeleteRestauranteUseCase,
-    usuarioInterface: UsuarioInterface // Usamos el repositorio de UsuarioInterface
+    usuarioInterface: UsuarioInterface
 ) {
-
     route("/restaurantes") {
         authenticate("jwt-auth") {
             get {
@@ -47,14 +48,18 @@ fun Route.restaurantesRoutes(
                 val email = principal?.payload?.getClaim("email")?.asString()
 
                 if (email != null) {
-                    // Verificar que el token coincida con el almacenado en la base de datos
                     val storedToken = usuarioInterface.getTokenByUsername(email)
                     val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
                     if (storedToken == providedToken) {
                         val request = call.receive<Restaurante>()
-                        val review = addRestauranteUseCase(request.titulo, request.descripcion, request.imagen)
-                        if (review != null) {
+                        val uploadDir = "res/drawable"
+                        File(uploadDir).mkdirs()
+
+                        val imageName = request.imagen?.let { saveImageFromBase64(it, uploadDir) } ?: ""
+                        val restaurante = addRestauranteUseCase(request.titulo, request.descripcion, imageName)
+
+                        if (restaurante != null) {
                             call.respond(HttpStatusCode.Created, "Restaurante creado correctamente")
                         } else {
                             call.respond(HttpStatusCode.BadRequest, "Restaurante no creado")
@@ -77,16 +82,27 @@ fun Route.restaurantesRoutes(
 
                     if (storedToken == providedToken) {
                         val id = call.parameters["id"]
-                        val review = call.receive<Restaurante>()
+                        val request = call.receive<Restaurante>()
+                        val uploadDir = "res/drawable"
+
                         id?.let {
-                            val request = updateRestauranteUseCase(id.toInt(), review)
-                            if (!request) {
-                                call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                            val existingRestaurante = getAllRestaurantesUseCase().find { it.id == id.toInt() }
+                            if (existingRestaurante != null) {
+                                deleteImage(existingRestaurante.imagen, uploadDir)
+                                val imageName = request.imagen?.let { saveImageFromBase64(it, uploadDir) }
+                                val updatedRestaurante = request.copy(imagen = imageName ?: existingRestaurante.imagen)
+                                val success = updateRestauranteUseCase(id.toInt(), updatedRestaurante)
+
+                                if (!success) {
+                                    call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                                } else {
+                                    call.respond(HttpStatusCode.OK, "Restaurante editado correctamente")
+                                }
                             } else {
-                                call.respond(HttpStatusCode.OK, "Restaurante editado correctamente")
+                                call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
                             }
                         } ?: run {
-                            call.respond(HttpStatusCode.NoContent, "ID no encontrado")
+                            call.respond(HttpStatusCode.BadRequest, "ID no encontrado")
                         }
                     } else {
                         call.respond(HttpStatusCode.Unauthorized, "Invalid token")
@@ -101,18 +117,25 @@ fun Route.restaurantesRoutes(
                 val email = principal?.payload?.getClaim("email")?.asString()
 
                 if (email != null) {
-                    // Verificar que el token coincida con el almacenado en la base de datos
                     val storedToken = usuarioInterface.getTokenByUsername(email)
                     val providedToken = call.request.headers["Authorization"]?.removePrefix("Bearer ")
 
                     if (storedToken == providedToken) {
                         val id = call.parameters["id"]
+                        val uploadDir = "res/drawable"
+
                         id?.let {
-                            val request = deleteRestauranteUseCase(id.toInt())
-                            if (!request) {
-                                call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                            val existingRestaurante = getAllRestaurantesUseCase().find { it.id == id.toInt() }
+                            if (existingRestaurante != null) {
+                                deleteImage(existingRestaurante.imagen, uploadDir)
+                                val success = deleteRestauranteUseCase(id.toInt())
+                                if (!success) {
+                                    call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
+                                } else {
+                                    call.respond(HttpStatusCode.NoContent)
+                                }
                             } else {
-                                call.respond(HttpStatusCode.NoContent)
+                                call.respond(HttpStatusCode.NotFound, "Restaurante no encontrado")
                             }
                         } ?: run {
                             call.respond(HttpStatusCode.BadRequest, "ID no encontrado")
@@ -124,6 +147,23 @@ fun Route.restaurantesRoutes(
                     call.respond(HttpStatusCode.Unauthorized, "Invalid token")
                 }
             }
+        }
+    }
+}
+
+fun saveImageFromBase64(base64Image: String, uploadDir: String): String {
+    val imageBytes = Base64.getDecoder().decode(base64Image)
+    val imageName = "a" + UUID.randomUUID().toString().replace("-", "") + ".jpg"
+    val imageFile = File(uploadDir, imageName)
+    imageFile.writeBytes(imageBytes)
+    return imageName
+}
+
+fun deleteImage(imageName: String?, uploadDir: String) {
+    if (imageName != null) {
+        val imageFile = File(uploadDir, imageName)
+        if (imageFile.exists()) {
+            imageFile.delete()
         }
     }
 }
